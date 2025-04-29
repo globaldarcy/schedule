@@ -434,7 +434,8 @@ header {
 }
 
 footer {
-    margin-top: 30px;
+    max-width: 640px;
+    margin: 30px auto 0;
     padding: 15px;
 
     &.edit {

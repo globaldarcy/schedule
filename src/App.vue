@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, nextTick } from 'vue';
+import { ref, reactive, nextTick, onMounted, computed } from 'vue';
 import { toPng } from 'html-to-image';
 
 const scheduleRef = ref();
@@ -14,11 +14,26 @@ function saveImage() {
     });
 }
 
-const isView = ref(false);
+onMounted(() => {
+    date.value = monday.value;
+    getWeekData(monday.value);
+});
 
+const now = ref(new Date());
+
+const getMonday = (date) => {
+    const day = date.getDay();
+    const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+    return new Date(date.setDate(diff)).toISOString().split('T')[0];
+};
+
+const monday = computed(() => getMonday(new Date(now.value)));
+const date = ref('');
+const isView = ref(false);
 const dateArray = ref([]);
 
 function getWeekData(dateStr) {
+    dateArray.value = [];
     const startDate = new Date(dateStr);
     // 获取一周的日期
     for (let i = 0; i < 7; i++) {
@@ -263,8 +278,6 @@ const handleInputConfirm = (data) => {
     data.itemVisible = false
     data.itemValue = ''
 };
-
-const date = ref('');
 
 const onPreview = () => {
     isView.value = !isView.value;

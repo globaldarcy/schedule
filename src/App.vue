@@ -253,20 +253,35 @@ const weekData = reactive([
     },
 ]);
 
-const itemAmRef = ref();
-const itemPmRef = ref();
+const itemAmRef = new Map();
+const itemPmRef = new Map();
 
+const setItemAmRef = (id, el) => {
+    if (el) {
+        itemAmRef.set(id, el)
+    } else {
+        itemAmRef.delete(id)
+    }
+}
+
+const setItemPmRef = (id, el) => {
+    if (el) {
+        itemPmRef.set(id, el)
+    } else {
+        itemPmRef.delete(id)
+    }
+}
 const handleClose = (data, tag) => {
     data.items.splice(data.items.indexOf(tag), 1);
 }
 
-const showInput = (data) => {
+const showInput = (data, id) => {
     data.itemVisible = true;
     nextTick(() => {
         if (data.status === 'am') {
-            itemAmRef.value.input.focus()
+            itemAmRef.get(id).focus()
         } else {
-            itemPmRef.value.input.focus()
+            itemPmRef.get(id).focus()
         }
     })
 }
@@ -319,7 +334,7 @@ const onPreview = () => {
                 <el-date-picker v-model="date" type="date" placeholder="请选择日期" format="YYYY/MM/DD" value-format="YYYY-MM-DD" @change="getWeekData(date)" />
             </div>
             <ul class="week-list">
-                <li class="week-item" v-for="item in weekData" :key="item.week" :style="{ '--s-bg-color': item.bgColor, '--s-color': item.color, boxShadow: 'var(--el-box-shadow)' }">
+                <li class="week-item" v-for="(item, itemIndex) in weekData" :key="item.week" :style="{ '--s-bg-color': item.bgColor, '--s-color': item.color, boxShadow: 'var(--el-box-shadow)' }">
                     <h2 class="week-title">
                         <el-icon>
                             <Calendar />
@@ -368,8 +383,8 @@ const onPreview = () => {
                             <div class="item-value">
                                 <template v-if="!isView">
                                     <el-tag v-for="(tag, index) in item.am.items" :key="tag + index" closable :disable-transitions="false" @close="handleClose(item.am, tag)"> {{ tag }} </el-tag>
-                                    <el-input v-if="item.am.itemVisible" ref="itemAmRef" v-model="item.am.itemValue" class="w-20" size="small" @keyup.enter="handleInputConfirm(item.am)" @blur="handleInputConfirm(item.am)" />
-                                    <el-button v-else class="button-new-tag" size="small" @click="showInput(item.am)"> 新增项目 </el-button>
+                                    <el-input v-if="item.am.itemVisible" :ref="el => setItemAmRef(itemIndex, el)" v-model="item.am.itemValue" class="w-20" size="small" @keyup.enter="handleInputConfirm(item.am)" @blur="handleInputConfirm(item.am)" />
+                                    <el-button v-else class="button-new-tag" size="small" @click="showInput(item.am, itemIndex)"> 新增项目 </el-button>
                                 </template>
                                 <div class="tag-list" v-if="isView">
                                     <el-tag v-for="(tag, index) in item.am.items" :key="tag + index" effect="dark" :type="(tag === '上学' || tag === '休息') ? 'success' : 'primary'" round size="large">{{ tag }}</el-tag>
@@ -412,8 +427,8 @@ const onPreview = () => {
                             <div class="item-value">
                                 <template v-if="!isView">
                                     <el-tag v-for="tag in item.pm.items" :key="tag" closable :disable-transitions="false" @close="handleClose(item.pm, tag)"> {{ tag }} </el-tag>
-                                    <el-input v-if="item.pm.itemVisible" ref="itemAmRef" v-model="item.pm.itemValue" class="w-20" size="small" @keyup.enter="handleInputConfirm(item.pm)" @blur="handleInputConfirm(item.pm)" />
-                                    <el-button v-else class="button-new-tag" size="small" @click="showInput(item.pm)"> 新增项目 </el-button>
+                                    <el-input v-if="item.pm.itemVisible" :ref="el => setItemPmRef(itemIndex, el)" v-model="item.pm.itemValue" class="w-20" size="small" @keyup.enter="handleInputConfirm(item.pm)" @blur="handleInputConfirm(item.pm)" />
+                                    <el-button v-else class="button-new-tag" size="small" @click="showInput(item.pm, itemIndex)"> 新增项目 </el-button>
                                 </template>
                                 <div class="tag-list" v-if="isView">
                                     <el-tag v-for="(tag, index) in item.pm.items" :key="tag + index" effect="dark" :type="(tag === '上学' || tag === '休息') ? 'success' : 'primary'" round size="large">{{ tag }}</el-tag>

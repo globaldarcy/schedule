@@ -2,9 +2,9 @@
 import { ref, reactive, nextTick } from 'vue';
 import { toPng } from 'html-to-image';
 
+const scheduleRef = ref();
 function saveImage() {
-    const node = document.getElementById('schedule-container');
-    toPng(node).then((dataUrl) => {
+    toPng(scheduleRef.value).then((dataUrl) => {
         const link = document.createElement('a');
         link.download = 'schedule.png';
         link.href = dataUrl;
@@ -16,6 +16,8 @@ function saveImage() {
 
 const isView = ref(false);
 
+const dateArray = ref([]);
+
 function getWeekData(dateStr) {
     const startDate = new Date(dateStr);
     // 获取一周的日期
@@ -25,6 +27,12 @@ function getWeekData(dateStr) {
         const month = currentDate.getMonth() + 1;
         const day = currentDate.getDate();
         weekData[i].date = `${month}月${day}日`;
+        if (i === 0) {
+            dateArray.value.push(`${month}月${day}日`);
+        }
+        if (i === 6) {
+            dateArray.value.push(`${month}月${day}日`);
+        }
     }
 }
 
@@ -58,19 +66,18 @@ const weekData = reactive([
         color: '#a0cfff',
         week: '星期一',
         date: '选择日期',
-        strength: 1,
+        strength: 3,
         am: {
             status: 'am',
             startTime: '',
             endTime: '',
             position: '',
-            items: ["休息"],
+            items: ["上学"],
             itemValue: '',
             itemVisible: false,
         },
         pm: {
             status: 'pm',
-            time: '08:00',
             startTime: '16:00',
             endTime: '18:00',
             position: '超man球场',
@@ -84,23 +91,147 @@ const weekData = reactive([
         color: 'rgb(224.6, 242.8, 215.6)',
         week: '星期二',
         date: '选择日期',
+        strength: 5,
+        am: {
+            status: 'am',
+            startTime: '',
+            endTime: '',
+            position: '',
+            items: ["上学"],
+            itemValue: '',
+            itemVisible: false,
+        },
+        pm: {
+            status: 'pm',
+            startTime: '16:00',
+            endTime: '18:00',
+            position: '超man球场',
+            items: ["技术", "传接", "圈抢", "对抗"],
+            itemValue: '',
+            itemVisible: false,
+        },
+    },
+    {
+        bgColor: '#E6A23C',
+        color: 'rgb(250, 236.4, 216)',
+        week: '星期三',
+        date: '选择日期',
+        strength: 3,
+        am: {
+            status: 'am',
+            startTime: '',
+            endTime: '',
+            position: '',
+            items: ["上学"],
+            itemValue: '',
+            itemVisible: false,
+        },
+        pm: {
+            status: 'pm',
+            startTime: '15:30',
+            endTime: '17:30',
+            position: '超man球场',
+            items: ["技术", "传接", "1v1 2v1 2v2", "对抗"],
+            itemValue: '',
+            itemVisible: false,
+        },
+    },
+    {
+        bgColor: '#F56C6C',
+        color: 'rgb(253, 225.6, 225.6)',
+        week: '星期四',
+        date: '选择日期',
+        strength: 5,
+        am: {
+            status: 'am',
+            startTime: '',
+            endTime: '',
+            position: '',
+            items: ["上学"],
+            itemValue: '',
+            itemVisible: false,
+        },
+        pm: {
+            status: 'pm',
+            startTime: '16:00',
+            endTime: '18:00',
+            position: '超man球场',
+            items: ["技术", "3v1 4v2", "转换", "对抗"],
+            itemValue: '',
+            itemVisible: false,
+        },
+    },
+    {
+        bgColor: '#733ac2',
+        color: 'rgb(233 226 253)',
+        week: '星期五',
+        date: '选择日期',
         strength: 1,
         am: {
             status: 'am',
             startTime: '',
             endTime: '',
             position: '',
-            items: ["休息"],
+            items: ["上学"],
             itemValue: '',
             itemVisible: false,
         },
         pm: {
             status: 'pm',
-            time: '08:00',
             startTime: '16:00',
             endTime: '18:00',
             position: '超man球场',
-            items: ["技术", "传接", "1v1 2v1 2v2", "对抗"],
+            items: ["技术", "传接", "1v1 2v1 2v2", "战术", "对抗"],
+            itemValue: '',
+            itemVisible: false,
+        },
+    },
+    {
+        bgColor: '#3ac2b5',
+        color: '#d8f3ef',
+        week: '星期六',
+        date: '选择日期',
+        strength: 5,
+        am: {
+            status: 'am',
+            startTime: '08:00',
+            endTime: '10:00',
+            position: '超man球场',
+            items: ["大连赢比赛5人制"],
+            itemValue: '',
+            itemVisible: false,
+        },
+        pm: {
+            status: 'pm',
+            startTime: '16:00',
+            endTime: '18:00',
+            position: '超man球场',
+            items: ["小课"],
+            itemValue: '',
+            itemVisible: false,
+        },
+    },
+    {
+        bgColor: '#c23aa9',
+        color: 'rgb(243 216 237)',
+        week: '星期日',
+        date: '选择日期',
+        strength: 3,
+        am: {
+            status: 'am',
+            startTime: '08:00',
+            endTime: '10:00',
+            position: '超man球场',
+            items: ["小课"],
+            itemValue: '',
+            itemVisible: false,
+        },
+        pm: {
+            status: 'pm',
+            startTime: '16:00',
+            endTime: '18:00',
+            position: '超man球场',
+            items: ["大连赢比赛5人制"],
             itemValue: '',
             itemVisible: false,
         },
@@ -142,165 +273,170 @@ const onPreview = () => {
 </script>
 
 <template>
-    <div id="schedule-container" :class="{ 'edit': !isView }">
-        <header :class="{ 'edit': !isView }">
-            <div class="logo">
-                <el-image style="width: 100px; height: 100px" src="/logo.jpg" fit="cover" />
+    <div class="schedule" :class="{ 'edit': !isView }">
+        <div class="schedule-container" ref="scheduleRef">
+            <header :class="{ 'edit': !isView }">
+                <div class="logo">
+                    <el-image style="width: 100px; height: 100px" src="/logo.jpg" fit="cover" />
+                </div>
+                <h1>谕奇足球俱乐部16、17队周计划<br>{{ dateArray.join(' - ') }}</h1>
+            </header>
+            <div class="week-message">
+                <template v-if="!isView">
+                    <div class="edit-item" v-for="item in message" :key="item.title">
+                        <h2>{{ item.title }}</h2>
+                        <p><el-input v-model="item.desc" :rows="item.rows" type="textarea" placeholder="Please input" clearable /></p>
+                    </div>
+                </template>
+                <template v-else>
+                    <el-alert title="如有变化另行通知" type="error" effect="dark" center :closable="false" show-icon>
+                        <template #icon>
+                            <Bell />
+                        </template>
+                    </el-alert>
+                    <el-alert v-for="item in message" :key="item.title" :closable="false" :title="item.title" :type="item.type" :description="item.desc" show-icon>
+                        <template #icon>
+                            <component :is="item.icon" />
+                        </template>
+                    </el-alert>
+                </template>
             </div>
-            <h1>谕奇足球俱乐部16、17队周计划</h1>
-        </header>
-        <div class="week-message">
-            <template v-if="!isView">
-                <div class="edit-item" v-for="item in message" :key="item.title">
-                    <h2>{{ item.title }}</h2>
-                    <p><el-input v-model="item.desc" :rows="item.rows" type="textarea" placeholder="Please input" clearable /></p>
-                </div>
-            </template>
-            <template v-else>
-                <el-alert title="如有变化另行通知" type="error" effect="dark" center :closable="false" show-icon>
-                    <template #icon>
-                        <Bell />
-                    </template>
-                </el-alert>
-                <el-alert v-for="item in message" :key="item.title" :closable="false" :title="item.title" :type="item.type" :description="item.desc" show-icon>
-                    <template #icon>
-                        <component :is="item.icon" />
-                    </template>
-                </el-alert>
-            </template>
-        </div>
-        <div class="week-date" v-if="!isView">
-            <span>周一日期:</span>
-            <el-date-picker v-model="date" type="date" placeholder="请选择日期" format="YYYY/MM/DD" value-format="YYYY-MM-DD" @change="getWeekData(date)" />
-        </div>
-        <ul class="week-list">
-            <li class="week-item" v-for="item in weekData" :key="item.week" :style="{ '--s-bg-color': item.bgColor, '--s-color': item.color, boxShadow: 'var(--el-box-shadow)' }">
-                <h2 class="week-title">
-                    <el-icon>
-                        <Calendar />
-                    </el-icon>
-                    {{ item.week }}
-                    <span>({{ item.date }})</span>
-                </h2>
-                <div class="week-rate">
-                    <span>训练强度: </span>
-                    <el-rate v-model="item.strength" size="large" :colors="['#409eff', '#67c23a', '#FF9900']" />
-                </div>
-                <div class="week-content">
-                    <div class="left">
-                        <h3>上午</h3>
-                        <div class="item-title">
-                            <el-icon>
-                                <Timer />
-                            </el-icon>
-                            时间:
-                            <template v-if="isView && item.am.startTime.trim()">
-                                {{ item.am.startTime }} - {{ item.am.endTime }}
-                            </template>
+            <div class="week-date" v-if="!isView">
+                <span>选择周一日期:</span>
+                <el-date-picker v-model="date" type="date" placeholder="请选择日期" format="YYYY/MM/DD" value-format="YYYY-MM-DD" @change="getWeekData(date)" />
+            </div>
+            <ul class="week-list">
+                <li class="week-item" v-for="item in weekData" :key="item.week" :style="{ '--s-bg-color': item.bgColor, '--s-color': item.color, boxShadow: 'var(--el-box-shadow)' }">
+                    <h2 class="week-title">
+                        <el-icon>
+                            <Calendar />
+                        </el-icon>
+                        {{ item.week }}
+                        <span>({{ item.date }})</span>
+                    </h2>
+                    <div class="week-rate">
+                        <span>训练强度: </span>
+                        <el-rate v-model="item.strength" :colors="['#67c23a', '#409eff', '#F56C6C']" />
+                    </div>
+                    <div class="week-content">
+                        <div class="left">
+                            <h3>上午</h3>
+                            <div class="item-title">
+                                <el-icon>
+                                    <Timer />
+                                </el-icon>
+                                时间:
+                                <template v-if="isView && item.am.startTime.trim()">
+                                    {{ item.am.startTime }} - {{ item.am.endTime }}
+                                </template>
+                            </div>
+                            <div class="item-value" v-if="!isView">
+                                <el-time-select v-model="item.am.startTime" style="width: 100%" :max-time="item.am.endTime" placeholder="开始时间" start="08:00" step="00:30" end="12:00" />
+                                <el-time-select v-model="item.am.endTime" style="width: 100%" :min-time="item.am.startTime" placeholder="结束时间" start="08:00" step="00:30" end="12:00" />
+                            </div>
+                            <div class="item-title">
+                                <el-icon>
+                                    <Location />
+                                </el-icon>
+                                地点:
+                                <template v-if="isView">
+                                    {{ item.am.position }}
+                                </template>
+                            </div>
+                            <div class="item-value" v-if="!isView">
+                                <el-input v-model="item.am.position" style="width: 100%" placeholder="请输入地点" clearable />
+                            </div>
+                            <div class="item-title">
+                                <el-icon>
+                                    <Tickets />
+                                </el-icon>
+                                项目:
+                            </div>
+                            <div class="item-value">
+                                <template v-if="!isView">
+                                    <el-tag v-for="(tag, index) in item.am.items" :key="tag + index" closable :disable-transitions="false" @close="handleClose(item.am, tag)"> {{ tag }} </el-tag>
+                                    <el-input v-if="item.am.itemVisible" ref="itemAmRef" v-model="item.am.itemValue" class="w-20" size="small" @keyup.enter="handleInputConfirm(item.am)" @blur="handleInputConfirm(item.am)" />
+                                    <el-button v-else class="button-new-tag" size="small" @click="showInput(item.am)"> 新增项目 </el-button>
+                                </template>
+                                <div class="tag-list" v-if="isView">
+                                    <el-tag v-for="(tag, index) in item.am.items" :key="tag + index" effect="dark" :type="(tag === '上学' || tag === '休息') ? 'success' : 'primary'" round size="large">{{ tag }}</el-tag>
+                                </div>
+                            </div>
                         </div>
-                        <div class="item-value" v-if="!isView">
-                            <el-time-select v-model="item.am.startTime" style="width: 100%" :max-time="item.am.endTime" placeholder="开始时间" start="08:00" step="00:30" end="12:00" />
-                            <el-time-select v-model="item.am.endTime" style="width: 100%" :min-time="item.am.startTime" placeholder="结束时间" start="08:00" step="00:30" end="12:00" />
-                        </div>
-                        <div class="item-title">
-                            <el-icon>
-                                <Location />
-                            </el-icon>
-                            地点:
-                            <template v-if="isView">
-                                {{ item.am.position }}
-                            </template>
-                        </div>
-                        <div class="item-value" v-if="!isView">
-                            <el-input v-model="item.am.position" style="width: 100%" placeholder="请输入地点" clearable />
-                        </div>
-                        <div class="item-title">
-                            <el-icon>
-                                <Tickets />
-                            </el-icon>
-                            项目:
-                        </div>
-                        <div class="item-value">
-                            <template v-if="!isView">
-                                <el-tag v-for="(tag, index) in item.am.items" :key="tag + index" closable :disable-transitions="false" @close="handleClose(item.am, tag)"> {{ tag }} </el-tag>
-                                <el-input v-if="item.am.itemVisible" ref="itemAmRef" v-model="item.am.itemValue" class="w-20" size="small" @keyup.enter="handleInputConfirm(item.am)" @blur="handleInputConfirm(item.am)" />
-                                <el-button v-else class="button-new-tag" size="small" @click="showInput(item.am)"> 新增项目 </el-button>
-                            </template>
-                            <div class="tag-list" v-if="isView">
-                                <el-tag v-for="(tag, index) in item.am.items" :key="tag + index" effect="dark" :type="item.am.items.length === 1 ? 'success' : 'primary'" round size="large">{{ tag }}</el-tag>
+                        <div class="right">
+                            <h3>下午</h3>
+                            <div class="item-title">
+                                <el-icon>
+                                    <Timer />
+                                </el-icon>
+                                时间:
+                                <template v-if="isView">
+                                    {{ item.pm.startTime }} - {{ item.pm.endTime }}
+                                </template>
+                            </div>
+                            <div class="item-value" v-if="!isView">
+                                <el-time-select v-model="item.pm.startTime" style="width: 100%" :max-time="item.pm.endTime" placeholder="开始时间" start="08:00" step="00:30" end="12:00" />
+                                <el-time-select v-model="item.pm.endTime" style="width: 100%" :min-time="item.pm.startTime" placeholder="结束时间" start="08:00" step="00:30" end="12:00" />
+                            </div>
+                            <div class="item-title">
+                                <el-icon>
+                                    <Location />
+                                </el-icon>
+                                地点:
+                                <template v-if="isView">
+                                    {{ item.pm.position }}
+                                </template>
+                            </div>
+                            <div class="item-value" v-if="!isView">
+                                <el-input v-model="item.pm.position" style="width: 100%" placeholder="请输入地点" clearable />
+                            </div>
+                            <div class="item-title">
+                                <el-icon>
+                                    <Tickets />
+                                </el-icon>
+                                项目:
+                            </div>
+                            <div class="item-value">
+                                <template v-if="!isView">
+                                    <el-tag v-for="tag in item.pm.items" :key="tag" closable :disable-transitions="false" @close="handleClose(item.pm, tag)"> {{ tag }} </el-tag>
+                                    <el-input v-if="item.pm.itemVisible" ref="itemAmRef" v-model="item.pm.itemValue" class="w-20" size="small" @keyup.enter="handleInputConfirm(item.pm)" @blur="handleInputConfirm(item.pm)" />
+                                    <el-button v-else class="button-new-tag" size="small" @click="showInput(item.pm)"> 新增项目 </el-button>
+                                </template>
+                                <div class="tag-list" v-if="isView">
+                                    <el-tag v-for="(tag, index) in item.pm.items" :key="tag + index" effect="dark" :type="(tag === '上学' || tag === '休息') ? 'success' : 'primary'" round size="large">{{ tag }}</el-tag>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="right">
-                        <h3>下午</h3>
-                        <div class="item-title">
-                            <el-icon>
-                                <Timer />
-                            </el-icon>
-                            时间:
-                            <template v-if="isView">
-                                {{ item.pm.startTime }} - {{ item.pm.endTime }}
-                            </template>
-                        </div>
-                        <div class="item-value" v-if="!isView">
-                            <el-time-select v-model="item.pm.startTime" style="width: 100%" :max-time="item.pm.endTime" placeholder="开始时间" start="08:00" step="00:30" end="12:00" />
-                            <el-time-select v-model="item.pm.endTime" style="width: 100%" :min-time="item.pm.startTime" placeholder="结束时间" start="08:00" step="00:30" end="12:00" />
-                        </div>
-                        <div class="item-title">
-                            <el-icon>
-                                <Location />
-                            </el-icon>
-                            地点:
-                            <template v-if="isView">
-                                {{ item.pm.position }}
-                            </template>
-                        </div>
-                        <div class="item-value" v-if="!isView">
-                            <el-input v-model="item.pm.position" style="width: 100%" placeholder="请输入地点" clearable />
-                        </div>
-                        <div class="item-title">
-                            <el-icon>
-                                <Tickets />
-                            </el-icon>
-                            项目:
-                        </div>
-                        <div class="item-value">
-                            <template v-if="!isView">
-                                <el-tag v-for="tag in item.pm.items" :key="tag" closable :disable-transitions="false" @close="handleClose(item.pm, tag)"> {{ tag }} </el-tag>
-                                <el-input v-if="item.pm.itemVisible" ref="itemAmRef" v-model="item.pm.itemValue" class="w-20" size="small" @keyup.enter="handleInputConfirm(item.pm)" @blur="handleInputConfirm(item.pm)" />
-                                <el-button v-else class="button-new-tag" size="small" @click="showInput(item.pm)"> 新增项目 </el-button>
-                            </template>
-                            <div class="tag-list" v-if="isView">
-                                <el-tag v-for="(tag, index) in item.pm.items" :key="tag + index" effect="dark" :type="item.pm.items.length === 1 ? 'success' : 'primary'" round size="large">{{ tag }}</el-tag>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </li>
-        </ul>
+                </li>
+            </ul>
+        </div>
     </div>
 
     <footer :class="{ 'edit': !isView }">
         <el-button v-if="!isView" type="success" icon="View" size="large" @click="onPreview">预览</el-button>
         <template v-else>
             <el-button type="primary" icon="Edit" size="large" @click="onPreview">编辑</el-button>
-            <el-button type="primary" icon="Edit" size="large" @click="saveImage">保存图片</el-button>
+            <el-button type="success" icon="Picture" size="large" @click="saveImage">保存图片</el-button>
         </template>
     </footer>
 </template>
 
 <style lang="scss">
-#schedule-container {
+.schedule {
     position: relative;
     max-width: 640px;
     width: 640px;
     margin: 0 auto;
-    padding: 15px;
-    background-color: #fff;
 
     &.edit {
         width: 100%;
     }
+}
+
+.schedule-container {
+    padding: 15px;
+    background-color: #fff;
 }
 
 header {
@@ -319,7 +455,7 @@ header {
         padding: 10px 0;
 
         h1 {
-            font-size: 14px;
+            font-size: 16px;
         }
     }
 }
@@ -377,6 +513,25 @@ header {
         justify-content: center;
         gap: 10px;
         background-color: #fff;
+
+        .el-rate {
+            height: 24px;
+        }
+
+        .el-rate__item {
+            width: 24px;
+            height: 24px;
+        }
+
+        .el-rate__icon {
+            width: 100%;
+            height: 100%;
+
+            svg {
+                width: 100%;
+                height: 100%;
+            }
+        }
     }
 
     .week-content {

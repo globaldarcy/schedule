@@ -354,7 +354,7 @@ const onPreview = () => {
                                     <Timer />
                                 </el-icon>
                                 时间:
-                                <template v-if="isView && item.am.startTime.trim()">
+                                <template v-if="isView && item.am.startTime">
                                     {{ item.am.startTime }} - {{ item.am.endTime }}
                                 </template>
                             </div>
@@ -398,13 +398,13 @@ const onPreview = () => {
                                     <Timer />
                                 </el-icon>
                                 时间:
-                                <template v-if="isView">
+                                <template v-if="isView && item.pm.startTime">
                                     {{ item.pm.startTime }} - {{ item.pm.endTime }}
                                 </template>
                             </div>
                             <div class="item-value" v-if="!isView">
-                                <el-time-select v-model="item.pm.startTime" style="width: 100%" :max-time="item.pm.endTime" placeholder="开始时间" start="08:00" step="00:30" end="12:00" />
-                                <el-time-select v-model="item.pm.endTime" style="width: 100%" :min-time="item.pm.startTime" placeholder="结束时间" start="08:00" step="00:30" end="12:00" />
+                                <el-time-select v-model="item.pm.startTime" style="width: 100%" :max-time="item.pm.endTime" placeholder="开始时间" start="12:00" step="00:30" end="20:00" />
+                                <el-time-select v-model="item.pm.endTime" style="width: 100%" :min-time="item.pm.startTime" placeholder="结束时间" start="12:00" step="00:30" end="20:00" />
                             </div>
                             <div class="item-title">
                                 <el-icon>
